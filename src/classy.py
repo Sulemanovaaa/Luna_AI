@@ -25,7 +25,7 @@ def replace_all(text):
            '9': '', ' а ': ' ', ' к ': ' ', ' к ': ' ', ' те ': ' ', '  ': ' ', 'a': '', 'b': '', 'c': '', 'd': '', 'e': '', 'f': '','g': '', 'h': '',
            'i': '', 'j': '', 'k': '', 'l': '', 'm': '', 'n': '', 'o': '', 'p': '', 'q': '', 'r': '', 's': '', 't': '',
            'u': '', 'v': '', 'w': '', 'x': '', 'y': '', 'z': '', ' пр ': ' ', 'мпк ': '', '  когда': '',
-           'нтв': '', 'ü': ''}
+           'нтв': '', 'ü': '', 'á': '', 'š': '', ' в ': ' ', ' с ': ' ', '—': '', 'фрг': ''}
     for i, j in dic.items():
         text = text.replace(i, j)
     text = text.replace('  ', ' ')
@@ -34,18 +34,22 @@ def replace_all(text):
 
 bloblist = []
 text_list = []
-
-path = '/Users/sulgod/PycharmProjects/Luna_AI/src/ex.json'
+pos = []
+path = '/Users/sulgod/PycharmProjects/Luna_AI/src/allnews.json'
 
 with open(path, 'r') as f:
     data = json.loads(f.read())
     dic=[]
-    for i in data['articles']['article']:
+    for i in data:
         document = tb(replace_all(str(i['text']).lower()))
         words = document.words.singularize()
         dic.append(words)
         dics = replace_all(str(dic).lower())
         doc=[]
+        if(str(i['isPos'])=='true'):
+            pos.append(1)
+        else:
+            pos.append(0)
         for i, j in enumerate(words):
             word = Porter.stem(words[i])
             doc.append(word)
@@ -67,7 +71,7 @@ transformer = vector.fit_transform(bloblist)
 density = (100.0 * transformer.nnz / (transformer.shape[0] * transformer.shape[1]))
 #print('Density: {}'.format((density)))
 from sklearn.model_selection import train_test_split
-X_train, X_test, y_train, y_test = train_test_split(transformer, cat, test_size=0.2, random_state=101)
+X_train, X_test, y_train, y_test = train_test_split(transformer, pos, test_size=0.2, random_state=101)
 nb = MultinomialNB()
 nb.fit(X_train, y_train)
 idf = vector.idf_
@@ -79,7 +83,7 @@ bloblist.append(testtest)
 for i, blob in enumerate(text_list):
     scores = {word: tfidf(word, blob, bloblist) for word in blob.words}
     sorted_words = sorted(scores.items(), key=lambda x: x[1], reverse=True)
-if pred == 0:
+if pred == 1:
     print ("It's positive article")
     print("Почему {} не оставит вас равнодушным".format(sorted_words[0][0]))
 else:
