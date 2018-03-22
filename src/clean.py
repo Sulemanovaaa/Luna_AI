@@ -26,7 +26,7 @@ def clean(document):
     text = (str(doc).replace("'", "")).replace(",", "")
     return text
 '''
-path = '/Users/sulgod/PycharmProjects/Luna_AI/src/all.json'
+path = '/Users/sulgod/PycharmProjects/Luna_AI/src/allnews.json'
 pos=[]
 bloblist=[]
 with open(path, 'r') as f:
@@ -42,5 +42,5 @@ with open(path, 'r') as f:
             pos.append(0)
         bloblist.append(clean(document))
     df = pd.DataFrame({'text': bloblist, 'label': pos})
-    df.to_csv('cleaned_data.csv')
+    df.to_csv('cleaned.csv')
 '''
